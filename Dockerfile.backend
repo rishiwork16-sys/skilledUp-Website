@@ -16,7 +16,23 @@ COPY career-service career-service
 
 ARG MODULE
 RUN mvn -q -DskipTests package -pl ${MODULE} -am
-RUN JAR_PATH=$(ls -1 ${MODULE}/target/*.jar | grep -v '\.original$' | head -n 1) && cp "$JAR_PATH" /workspace/app.jar
+RUN set -e; \
+  JAR_PATH=""; \
+  for f in ${MODULE}/target/*.jar; do \
+    case "$f" in \
+      *.original|*-sources.jar|*-javadoc.jar) continue ;; \
+    esac; \
+    if jar tf "$f" | grep -q '^BOOT-INF/'; then \
+      JAR_PATH="$f"; \
+      break; \
+    fi; \
+  done; \
+  if [ -z "$JAR_PATH" ]; then \
+    echo "No executable Spring Boot jar found for module=$MODULE"; \
+    ls -la ${MODULE}/target; \
+    exit 1; \
+  fi; \
+  cp "$JAR_PATH" /workspace/app.jar
 
 FROM eclipse-temurin:17-jre
 WORKDIR /app
