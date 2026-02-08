@@ -1,0 +1,83 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      httpclient:
+        connect-timeout: 30000
+        response-timeout: 300s
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:5174}
+            allowedMethods: ${CORS_ALLOWED_METHODS:GET,POST,PUT,DELETE,OPTIONS}
+            allowedHeaders: ${CORS_ALLOWED_HEADERS:*}
+            allowCredentials: ${CORS_ALLOW_CREDENTIALS:true}
+      routes:
+        # Auth Service Routes
+        - id: auth-service
+          uri: ${AUTH_SERVICE_URI:http://localhost:8081}
+          predicates:
+            - Path=/api/auth/**
+        
+        # Student Service Routes
+        - id: student-service
+          uri: ${STUDENT_SERVICE_URI:http://localhost:8082}
+          predicates:
+            - Path=/api/students/**, /api/internship-types/**, /api/categories/**, /api/requests/**, /api/admin/students/**, /api/student/config/**, /api/student/enrollments/**, /api/lor/**, /api/enquiries/**, /api/student-inquiries/**, /api/admin/enquiries/**, /api/admin/backgrounds/**, /api/admin/states/**
+        
+        # Task Service Routes
+        - id: task-service
+          uri: ${TASK_SERVICE_URI:http://localhost:8084}
+          predicates:
+            - Path=/api/tasks/**
+        
+        # Certificate Service Routes
+        - id: certificate-service
+          uri: ${CERTIFICATE_SERVICE_URI:http://localhost:8083}
+          predicates:
+            - Path=/api/certificates/**
+        
+        # Notification Service Routes
+        - id: notification-service
+          uri: ${NOTIFICATION_SERVICE_URI:http://localhost:8085}
+          predicates:
+            - Path=/api/notifications/**
+        
+        # Course Service Routes
+        - id: course-service
+          uri: ${COURSE_SERVICE_URI:http://localhost:8090}
+          predicates:
+            - Path=/api/courses/**, /api/admin/courses/**
+        
+        # Career Service Routes
+        - id: career-service
+          uri: ${CAREER_SERVICE_URI:http://localhost:8093}
+          predicates:
+            - Path=/api/careers/**
+
+        # Payment Service Routes
+        - id: payment-service
+          uri: ${PAYMENT_SERVICE_URI:http://localhost:8091}
+          predicates:
+            - Path=/api/payments/**
+
+        # Support Service Routes
+        - id: support-service
+          uri: ${SUPPORT_SERVICE_URI:http://localhost:8086}
+          predicates:
+            - Path=/api/support/**, /api/admin/support/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
+    fetch-registry: true
+    register-with-eureka: true

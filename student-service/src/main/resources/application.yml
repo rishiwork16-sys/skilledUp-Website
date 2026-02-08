@@ -1,0 +1,65 @@
+server:
+  port: 8082
+  tomcat:
+    max-http-post-size: 50MB
+    max-http-form-post-size: 50MB
+    max-swallow-size: 50MB
+
+spring:
+  application:
+    name: student-service
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+  
+  datasource:
+    url: ${STUDENT_DB_URL:jdbc:mysql://127.0.0.1:3306/student_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: ${JPA_DDL_AUTO:update}
+    show-sql: ${JPA_SHOW_SQL:true}
+    generate-ddl: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+
+# Eureka Client
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+
+# AWS Configuration
+cloud:
+  aws:
+    credentials:
+      access-key: ${AWS_ACCESS_KEY_ID:}
+      secret-key: ${AWS_SECRET_ACCESS_KEY:}
+    region:
+      static: ${AWS_REGION:us-east-1}
+    s3:
+      bucket: ${AWS_BUCKET:lms-testing1}
+# File Paths
+file:
+  templates:
+    dir: ${TEMPLATES_DIR:/app/templates}
+    certificate: ${CERTIFICATE_TEMPLATE_NAME:CertificateTemplate.pptx}
+    offer-letter: ${OFFER_LETTER_TEMPLATE_NAME:OfferLetterTemplate.pptx}
+
+# Actuator Endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics

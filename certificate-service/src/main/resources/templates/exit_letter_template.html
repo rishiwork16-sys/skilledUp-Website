@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Exit Letter</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', serif;
+            padding: 50px;
+            line-height: 1.6;
+        }
+
+        .header {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 40px;
+        }
+
+        .date {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .content {
+            margin-bottom: 40px;
+            text-align: justify;
+        }
+
+        .signature {
+            margin-top: 60px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">EXIT LETTER</div>
+
+    <div class="date">
+        Date: [[issueDate]]
+    </div>
+
+    <div>
+        To,<br>
+        <b>[[studentName]]</b><br>
+    </div>
+
+    <div class="content">
+        <p>Dear [[studentName]],</p>
+
+        <p>This letter is to confirm the completion of your internship with <b>SkilledUp</b> in the <b>[[domain]]</b>
+            department. Your internship tenure was from <b>[[startDate]]</b> to <b>[[endDate]]</b>.</p>
+
+        <p>We appreciate your contributions during your time with us. You have been relieved of your duties effective
+            from the closing hours of [[endDate]].</p>
+
+        <p>We wish you all the best in your future endeavors.</p>
+    </div>
+
+    <div class="signature">
+        Sincerely,<br><br>
+        <b>HR Manager</b><br>
+        SkilledUp
+    </div>
+</body>
+
+</html>
