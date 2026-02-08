@@ -16,10 +16,10 @@ COPY career-service career-service
 
 ARG MODULE
 RUN mvn -q -DskipTests package -pl ${MODULE} -am
+RUN JAR_PATH=$(ls -1 ${MODULE}/target/*.jar | grep -v '\.original$' | head -n 1) && cp "$JAR_PATH" /workspace/app.jar
 
 FROM eclipse-temurin:17-jre
 WORKDIR /app
-ARG MODULE
-COPY --from=build /workspace/${MODULE}/target/*.jar app.jar
+COPY --from=build /workspace/app.jar app.jar
 ENV JAVA_OPTS=""
 ENTRYPOINT ["sh","-c","java $JAVA_OPTS -jar app.jar"]
