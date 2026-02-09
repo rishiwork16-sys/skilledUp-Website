@@ -1,5 +1,6 @@
 package com.skilledup.career.controller;
 
+import com.skilledup.career.dto.ApiMessage;
 import com.skilledup.career.dto.JobApplicationAdminResponse;
 import com.skilledup.career.model.Job;
 import com.skilledup.career.model.JobApplication;
@@ -20,6 +21,11 @@ public class CareerController {
     private final CareerService careerService;
 
     // --- Public Endpoints ---
+
+    @GetMapping("/health")
+    public ResponseEntity<ApiMessage> health() {
+        return ResponseEntity.ok(new ApiMessage("Career Service is running"));
+    }
 
     @GetMapping("/jobs")
     public ResponseEntity<List<Job>> getActiveJobs() {

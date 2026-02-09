@@ -27,6 +27,7 @@ services:
     environment:
       - SERVER_PORT=8080
       - EUREKA_SERVER_URL=http://eureka-server:8761/eureka/
+      - EUREKA_SERVER_HEALTH_URI=http://eureka-server:8761
       - AUTH_SERVICE_URI=http://auth-service:8081
       - STUDENT_SERVICE_URI=http://student-service:8082
       - CERTIFICATE_SERVICE_URI=http://certificate-service:8083
@@ -55,6 +56,8 @@ services:
       - SPRING_DATASOURCE_URL=${AUTH_DB_URL}
       - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRATION_MS=${JWT_EXPIRATION_MS}
     networks:
       - skilledup
 

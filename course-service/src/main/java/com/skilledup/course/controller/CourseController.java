@@ -1,5 +1,6 @@
 package com.skilledup.course.controller;
 
+import com.skilledup.course.dto.ApiMessage;
 import com.skilledup.course.entity.Course;
 import com.skilledup.course.service.CourseService;
 import com.skilledup.course.service.S3Service;
@@ -20,6 +21,11 @@ public class CourseController {
 
     @Autowired
     private CourseService courseService;
+
+    @GetMapping("/health")
+    public ResponseEntity<ApiMessage> health() {
+        return ResponseEntity.ok(new ApiMessage("Course Service is running"));
+    }
 
     @GetMapping
     public ResponseEntity<List<Course>> getAllCourses() {

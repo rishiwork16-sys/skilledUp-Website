@@ -1,5 +1,6 @@
 package com.skilledup.certificate.controller;
 
+import com.skilledup.certificate.dto.ApiMessage;
 import com.skilledup.certificate.dto.LORGenerationRequest;
 import com.skilledup.certificate.service.CertificateGeneratorService;
 import com.skilledup.certificate.service.LORGenerationService;
@@ -29,6 +30,11 @@ public class CertificateController {
 
     private final CertificateGeneratorService certificateGeneratorService;
     private final LORGenerationService lorGenerationService;
+
+    @GetMapping("/health")
+    public ResponseEntity<ApiMessage> health() {
+        return ResponseEntity.ok(new ApiMessage("Certificate Service is running"));
+    }
 
     // Test Endpoint to Preview Certificate
     @PostMapping("/preview")

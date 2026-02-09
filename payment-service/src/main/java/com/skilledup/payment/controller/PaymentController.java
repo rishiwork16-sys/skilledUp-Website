@@ -1,6 +1,7 @@
 package com.skilledup.payment.controller;
 
 import com.razorpay.RazorpayException;
+import com.skilledup.payment.dto.ApiMessage;
 import com.skilledup.payment.entity.PaymentOrder;
 import com.skilledup.payment.service.PaymentService;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,11 @@ public class PaymentController {
 
     public PaymentController(PaymentService paymentService) {
         this.paymentService = paymentService;
+    }
+
+    @GetMapping("/health")
+    public ResponseEntity<ApiMessage> health() {
+        return ResponseEntity.ok(new ApiMessage("Payment Service is running"));
     }
 
     @PostMapping("/create-order")

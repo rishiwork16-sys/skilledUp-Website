@@ -21,6 +21,12 @@ spring:
             allowedHeaders: ${CORS_ALLOWED_HEADERS:*}
             allowCredentials: ${CORS_ALLOW_CREDENTIALS:true}
       routes:
+        # Eureka Server Routes
+        - id: eureka-server
+          uri: ${EUREKA_SERVER_HEALTH_URI:http://localhost:8761}
+          predicates:
+            - Path=/api/eureka/**
+
         # Auth Service Routes
         - id: auth-service
           uri: ${AUTH_SERVICE_URI:http://localhost:8081}
