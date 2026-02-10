@@ -31,10 +31,10 @@ eureka:
 # AWS S3 Configuration
 aws:
   s3:
-    access-key: ${AWS_ACCESS_KEY_ID:}
-    secret-key: ${AWS_SECRET_ACCESS_KEY:}
-    region: ${AWS_REGION:us-east-1}
-    bucket: ${AWS_BUCKET:lms-testing1}
+    access-key: ${AWS_ACCESS_KEY_ID:${CLOUD_AWS_CREDENTIALS_ACCESS_KEY:}}
+    secret-key: ${AWS_SECRET_ACCESS_KEY:${CLOUD_AWS_CREDENTIALS_SECRET_KEY:}}
+    region: ${AWS_REGION:${CLOUD_AWS_REGION_STATIC:us-east-1}}
+    bucket: ${AWS_BUCKET:${CLOUD_AWS_S3_BUCKET:lms-testing1}}
   cloudfront:
     domain: ${CLOUDFRONT_DOMAIN:}
     key-pair-id: ${CLOUDFRONT_KEY_PAIR_ID:}
