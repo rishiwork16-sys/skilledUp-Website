@@ -35,6 +35,7 @@ aws:
     secret-key: ${AWS_SECRET_ACCESS_KEY:${CLOUD_AWS_CREDENTIALS_SECRET_KEY:}}
     region: ${AWS_REGION:${CLOUD_AWS_REGION_STATIC:us-east-1}}
     bucket: ${AWS_BUCKET:${CLOUD_AWS_S3_BUCKET:lms-testing1}}
+    prefix: ${AWS_S3_PREFIX:courses}
   cloudfront:
     domain: ${CLOUDFRONT_DOMAIN:}
     key-pair-id: ${CLOUDFRONT_KEY_PAIR_ID:}

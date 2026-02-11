@@ -35,6 +35,9 @@ public class S3Service {
     @Value("${aws.s3.bucket}")
     private String bucketName;
 
+    @Value("${aws.s3.prefix:courses}")
+    private String keyPrefix;
+
     private AmazonS3 s3Client;
 
     @PostConstruct
@@ -52,12 +55,16 @@ public class S3Service {
 
     public String uploadFile(MultipartFile file) throws IOException {
         String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+        String prefix = keyPrefix == null ? "" : keyPrefix.trim();
+        if (prefix.startsWith("/")) prefix = prefix.substring(1);
+        if (prefix.endsWith("/")) prefix = prefix.substring(0, prefix.length() - 1);
+        String objectKey = prefix.isBlank() ? fileName : (prefix + "/" + fileName);
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(file.getSize());
         metadata.setContentType(file.getContentType());
 
-        s3Client.putObject(new PutObjectRequest(bucketName, fileName, file.getInputStream(), metadata));
-        return fileName; // Return key (filename) to store in DB
+        s3Client.putObject(new PutObjectRequest(bucketName, objectKey, file.getInputStream(), metadata));
+        return objectKey; // Return key to store in DB
     }
 
     public void uploadFile(File file, String key) {
