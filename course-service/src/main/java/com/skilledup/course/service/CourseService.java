@@ -195,6 +195,7 @@ public class CourseService {
                 course.setSlug(courseDetails.getTitle().toLowerCase().replace(" ", "-"));
             }
             course.setDescription(courseDetails.getDescription());
+            course.setSubtitle(courseDetails.getSubtitle());
             course.setPrice(courseDetails.getPrice());
             course.setOriginalPrice(courseDetails.getOriginalPrice());
             course.setDiscount(courseDetails.getDiscount());

@@ -26,6 +26,8 @@ public class Course {
     @Column(length = 2000)
     private String description;
 
+    private String subtitle;
+
     private String slug;
 
     private Double price;
