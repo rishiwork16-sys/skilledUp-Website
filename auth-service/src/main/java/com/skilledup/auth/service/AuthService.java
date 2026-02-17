@@ -5,6 +5,7 @@ import com.skilledup.auth.dto.AuthResponse;
 import com.skilledup.auth.dto.LoginRequest;
 import com.skilledup.auth.dto.RegisterRequest;
 import com.skilledup.auth.dto.ResetPasswordRequest;
+import com.skilledup.auth.dto.UserLookupResponse;
 
 public interface AuthService {
     AuthResponse register(RegisterRequest request);
@@ -20,6 +21,8 @@ public interface AuthService {
     ApiMessage verifyOtp(String identifier, String otp, String type);
 
     AuthResponse getUserByEmail(String email);
+
+    UserLookupResponse getUserByMobile(String mobile);
 
     AuthResponse updateUser(Long id, RegisterRequest request);
 

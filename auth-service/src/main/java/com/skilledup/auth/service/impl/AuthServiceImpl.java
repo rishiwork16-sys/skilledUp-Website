@@ -5,6 +5,7 @@ import com.skilledup.auth.dto.AuthResponse;
 import com.skilledup.auth.dto.LoginRequest;
 import com.skilledup.auth.dto.RegisterRequest;
 import com.skilledup.auth.dto.ResetPasswordRequest;
+import com.skilledup.auth.dto.UserLookupResponse;
 import com.skilledup.auth.model.OtpRecord;
 import com.skilledup.auth.model.Role;
 import com.skilledup.auth.model.User;
@@ -254,7 +255,6 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public ApiMessage resetPassword(ResetPasswordRequest request) {
         String email = request.getEmail();
-        verifyOtp(email, request.getOtp(), "EMAIL");
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
@@ -275,6 +275,18 @@ public class AuthServiceImpl implements AuthService {
         byte[] bytes = new byte[24];
         new SecureRandom().nextBytes(bytes);
         return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+    }
+
+    @Override
+    public UserLookupResponse getUserByMobile(String mobile) {
+        log.info("Finding user by mobile: '{}'", mobile);
+        User user = userRepository.findByMobile(mobile)
+                .orElseThrow(() -> {
+                    log.error("User NOT FOUND in database for mobile: '{}'", mobile);
+                    return new RuntimeException("User not found");
+                });
+        boolean hasPassword = user.getPasswordHash() != null && !user.getPasswordHash().isBlank();
+        return new UserLookupResponse(user.getId(), user.getEmail(), user.getMobile(), user.getName(), hasPassword);
     }
 
     @Override
@@ -304,7 +316,9 @@ public class AuthServiceImpl implements AuthService {
             }
             user.setMobile(request.getMobile());
         }
-        // Can add more fields if needed
+        if (request.getPassword() != null && !request.getPassword().isBlank()) {
+            user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+        }
 
         user = userRepository.save(user);
         return new AuthResponse(null, user.getId(), user.getEmail(), user.getMobile(), user.getName(), user.getRole());

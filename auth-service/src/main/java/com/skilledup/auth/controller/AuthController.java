@@ -5,6 +5,7 @@ import com.skilledup.auth.dto.AuthResponse;
 import com.skilledup.auth.dto.LoginRequest;
 import com.skilledup.auth.dto.RegisterRequest;
 import com.skilledup.auth.dto.ResetPasswordRequest;
+import com.skilledup.auth.dto.UserLookupResponse;
 import com.skilledup.auth.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -76,6 +77,11 @@ public class AuthController {
     @GetMapping("/user")
     public ResponseEntity<AuthResponse> getUserByEmail(@RequestParam String email) {
         return ResponseEntity.ok(authService.getUserByEmail(email));
+    }
+
+    @GetMapping("/user-by-mobile")
+    public ResponseEntity<UserLookupResponse> getUserByMobile(@RequestParam String mobile) {
+        return ResponseEntity.ok(authService.getUserByMobile(mobile));
     }
 
     @PostMapping("/reset-password")
