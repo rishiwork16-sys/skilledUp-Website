@@ -289,19 +289,37 @@ public class CourseService {
     }
 
     @Transactional
+    public Module updateModule(Long moduleId, Module moduleDetails) {
+        Module module = moduleRepository.findById(moduleId)
+                .orElseThrow(() -> new RuntimeException("Module not found with id: " + moduleId));
+        module.setTitle(moduleDetails.getTitle());
+        module.setDescription(moduleDetails.getDescription());
+        return moduleRepository.save(module);
+    }
+
+    @Transactional
+    public void deleteModule(Long moduleId) {
+        Module module = moduleRepository.findById(moduleId)
+                .orElseThrow(() -> new RuntimeException("Module not found with id: " + moduleId));
+        moduleRepository.delete(module);
+    }
+
+    @Transactional
     public Video addVideo(Long moduleId, String title, String description, MultipartFile file, String duration)
             throws IOException {
         try {
-            System.out.println("Uploading video for module ID: " + moduleId);
+            System.out.println("Creating video for module ID: " + moduleId);
             Module module = moduleRepository.findById(moduleId)
                     .orElseThrow(() -> new RuntimeException("Module not found with id: " + moduleId));
 
-            System.out.println("Found module: " + module.getId());
-            System.out.println("Starting HLS processing for file: " + file.getOriginalFilename());
-
-            // Use VideoProcessingService to transcode and upload HLS
-            String s3Key = videoProcessingService.processAndUploadVideo(file);
-            System.out.println("HLS upload successful, master playlist key: " + s3Key);
+            String s3Key = null;
+            if (file != null && !file.isEmpty()) {
+                System.out.println("Starting HLS processing for file: " + file.getOriginalFilename());
+                s3Key = videoProcessingService.processAndUploadVideo(file);
+                System.out.println("HLS upload successful, master playlist key: " + s3Key);
+            } else {
+                System.out.println("No file provided, creating metadata-only video entry");
+            }
 
             Video video = new Video();
             video.setTitle(title);
@@ -309,7 +327,7 @@ public class CourseService {
             video.setS3Key(s3Key);
             video.setDuration(duration);
             video.setModule(module);
-            video.setIsLocked(true); // Default locked
+            video.setIsLocked(true);
 
             Video savedVideo = videoRepository.save(video);
             System.out.println("Video saved to DB: " + savedVideo.getId());
@@ -320,7 +338,7 @@ public class CourseService {
         } catch (Exception e) {
             System.err.println("ERROR in addVideo: " + e.getMessage());
             e.printStackTrace();
-            throw new RuntimeException(e); // Rethrow to let controller handle it
+            throw new RuntimeException(e);
         }
     }
 

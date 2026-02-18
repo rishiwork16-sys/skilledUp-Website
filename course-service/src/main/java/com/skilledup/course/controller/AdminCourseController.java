@@ -43,7 +43,7 @@ public class AdminCourseController {
     @PostMapping("/modules/{moduleId}/videos")
     public ResponseEntity<?> uploadVideo(
             @PathVariable Long moduleId,
-            @RequestParam("file") MultipartFile file,
+            @RequestParam(value = "file", required = false) MultipartFile file,
             @RequestParam("title") String title,
             @RequestParam("description") String description,
             @RequestParam(value = "duration", defaultValue = "00:00") String duration) throws IOException {
@@ -53,6 +53,17 @@ public class AdminCourseController {
             e.printStackTrace();
             return ResponseEntity.status(500).body(Map.of("message", "Video upload failed"));
         }
+    }
+
+    @PutMapping("/modules/{moduleId}")
+    public ResponseEntity<Module> updateModule(@PathVariable Long moduleId, @RequestBody Module module) {
+        return ResponseEntity.ok(courseService.updateModule(moduleId, module));
+    }
+
+    @DeleteMapping("/modules/{moduleId}")
+    public ResponseEntity<Void> deleteModule(@PathVariable Long moduleId) {
+        courseService.deleteModule(moduleId);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{id}/thumbnail")
