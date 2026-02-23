@@ -60,11 +60,6 @@ public class CourseShareController {
         String imageUrl = course.getThumbnailUrl();
         if (imageUrl == null || imageUrl.isBlank()) {
             imageUrl = base + "/images/skilledup-og-1200x630.png";
-        } else if (!imageUrl.startsWith("http")) {
-            if (!imageUrl.startsWith("/")) {
-                imageUrl = "/" + imageUrl;
-            }
-            imageUrl = base + imageUrl;
         }
 
         String html = "<!DOCTYPE html>\n" +
@@ -100,4 +95,3 @@ public class CourseShareController {
         return escaped;
     }
 }
-
