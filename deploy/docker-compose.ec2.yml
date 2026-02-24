@@ -192,6 +192,9 @@ services:
       - AWS_BUCKET=${AWS_BUCKET}
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      # Social Share / OG Tags ke liye
+      - FRONTEND_BASE_URL=${FRONTEND_BASE_URL:https://skilledup.tech}
+      - API_PUBLIC_BASE_URL=${API_PUBLIC_BASE_URL:http://35.154.236.138:8080}
     networks:
       - skilledup
 

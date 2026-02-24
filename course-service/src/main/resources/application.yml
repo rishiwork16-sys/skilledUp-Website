@@ -44,3 +44,10 @@ aws:
 # FFmpeg Configuration
 ffmpeg:
   path: ${FFMPEG_PATH:ffmpeg}
+
+# Frontend & API Public URLs (OG Tags / Social Share ke liye)
+application:
+  frontend:
+    base-url: ${FRONTEND_BASE_URL:https://skilledup.tech}
+  api:
+    public-base-url: ${API_PUBLIC_BASE_URL:http://35.154.236.138:8080}
