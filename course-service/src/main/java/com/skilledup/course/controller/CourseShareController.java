@@ -63,8 +63,13 @@ public class CourseShareController {
     // -----------------------------------------------------------------------
     @GetMapping("/{slug}")
     public ResponseEntity<String> getSharePage(@PathVariable String slug) {
-        Course course = courseRepository.findBySlug(slug)
-                .orElseThrow(() -> new RuntimeException("Course not found: " + slug));
+        Course course = courseRepository.findBySlug(slug).orElse(null);
+
+        if (course == null) {
+            // Safer fallback: instead of 500, redirect to home or show clean 404
+            return ResponseEntity.status(404).body("<html><body><h1>Course Not Found</h1><script>window.location.href='"
+                    + frontendBaseUrl + "'</script></body></html>");
+        }
 
         String title = course.getTitle() != null ? course.getTitle() : "SkilledUp Course";
         String category = course.getCategory() != null && !course.getCategory().isBlank()
@@ -104,8 +109,10 @@ public class CourseShareController {
         String thumbnailKey = course.getThumbnailUrl(); // DB mein S3 key stored hai (http se shuru nahi hoti)
         String ogImageUrl;
         if (thumbnailKey != null && !thumbnailKey.isBlank() && !thumbnailKey.startsWith("http")) {
-            // Stable proxy URL — kabhi expire nahi hogi
-            ogImageUrl = apiBase + "/api/courses/share/" + course.getSlug() + "/thumbnail";
+            // Stable proxy URL — encoded slug to avoid & breaking the link
+            ogImageUrl = apiBase + "/api/courses/share/"
+                    + java.net.URLEncoder.encode(course.getSlug(), java.nio.charset.StandardCharsets.UTF_8)
+                    + "/thumbnail";
         } else if (thumbnailKey != null && thumbnailKey.startsWith("http")) {
             // Pehle se hi public URL hai (e.g. CloudFront)
             ogImageUrl = thumbnailKey;
