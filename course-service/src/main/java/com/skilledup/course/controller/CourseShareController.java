@@ -55,16 +55,32 @@ public class CourseShareController {
      * Example: https://api.skilledup.tech ya http://35.154.236.138:8080
      * .env mein set karo: API_PUBLIC_BASE_URL=https://api.skilledup.tech
      */
-    @Value("${application.api.public-base-url:http://35.154.236.138:8080}")
+    @Value("${application.api.public-base-url:https://api.skilledup.tech}")
     private String apiPublicBaseUrl;
 
     // -----------------------------------------------------------------------
     // 1) MAIN SHARE PAGE — OG Meta Tags wala HTML
     // -----------------------------------------------------------------------
-    @GetMapping("/{slug}")
-    public ResponseEntity<String> getSharePage(@PathVariable String slug) {
-        Course course = courseRepository.findBySlug(slug).orElse(null);
 
+    // Support for /api/courses/share/id/{id}
+    @GetMapping("/id/{id}")
+    public ResponseEntity<String> getSharePageById(@PathVariable Long id) {
+        Course course = courseRepository.findById(id).orElse(null);
+        return generateShareHtml(course);
+    }
+
+    // Support for /api/courses/share/{slug}
+    @GetMapping("/{slug}")
+    public ResponseEntity<String> getSharePageBySlug(@PathVariable String slug) {
+        // Fallback: Check if slug is actually an ID
+        if (slug.matches("\\d+")) {
+            return getSharePageById(Long.parseLong(slug));
+        }
+        Course course = courseRepository.findBySlug(slug).orElse(null);
+        return generateShareHtml(course);
+    }
+
+    private ResponseEntity<String> generateShareHtml(Course course) {
         if (course == null) {
             // Safer fallback: instead of 500, redirect to home or show clean 404
             return ResponseEntity.status(404).body("<html><body><h1>Course Not Found</h1><script>window.location.href='"
@@ -99,25 +115,23 @@ public class CourseShareController {
 
         // ---- URLs ----
         String base = clean(frontendBaseUrl, "https://skilledup.tech");
-        String apiBase = clean(apiPublicBaseUrl, "http://35.154.236.138:8080");
+        String apiBase = clean(apiPublicBaseUrl, "https://api.skilledup.tech");
         String safeCategory = category.replace(" ", "-");
         String courseUrl = base + "/courses/" + safeCategory + "/" + course.getSlug();
 
         // ---- OG Image URL ----
-        // IMPORTANT: S3 presigned URL use nahi karte — woh expire hota hai!
-        // Apna stable thumbnail proxy endpoint use karte hain:
-        String thumbnailKey = course.getThumbnailUrl(); // DB mein S3 key stored hai (http se shuru nahi hoti)
+        // Prefer using ID for thumbnail proxy to avoid slug encoding issues
+        String thumbnailKey = course.getThumbnailUrl();
         String ogImageUrl;
-        if (thumbnailKey != null && !thumbnailKey.isBlank() && !thumbnailKey.startsWith("http")) {
-            // Stable proxy URL — encoded slug to avoid & breaking the link
-            ogImageUrl = apiBase + "/api/courses/share/"
-                    + java.net.URLEncoder.encode(course.getSlug(), java.nio.charset.StandardCharsets.UTF_8)
-                    + "/thumbnail";
-        } else if (thumbnailKey != null && thumbnailKey.startsWith("http")) {
-            // Pehle se hi public URL hai (e.g. CloudFront)
-            ogImageUrl = thumbnailKey;
+
+        if (thumbnailKey != null && !thumbnailKey.isBlank()) {
+            if (thumbnailKey.startsWith("http")) {
+                ogImageUrl = thumbnailKey;
+            } else {
+                // Use ID-based proxy for thumbnail for maximum stability
+                ogImageUrl = apiBase + "/api/courses/share/thumbnail/" + course.getId();
+            }
         } else {
-            // Fallback — frontend ka default OG image
             ogImageUrl = base + "/og-default.png";
         }
 
@@ -174,17 +188,31 @@ public class CourseShareController {
                 .header(HttpHeaders.CONTENT_TYPE,
                         MediaType.TEXT_HTML_VALUE + ";charset=" + StandardCharsets.UTF_8.name())
                 // Crawlers cache karne dete hain 1 ghante tak:
-                .header(HttpHeaders.CACHE_CONTROL, "public, max-age=3600")
-                .body(html);
+                .header(HttpHeaders.CACHE_CONTROL, "public, max-age=3600").body(html);
     }
 
     // -----------------------------------------------------------------------
     // 2) THUMBNAIL PROXY — S3 Image directly stream karega (stable URL)
     // -----------------------------------------------------------------------
+
+    // Support for /api/courses/share/thumbnail/{id}
+    @GetMapping("/thumbnail/{id}")
+    public ResponseEntity<byte[]> getThumbnailById(@PathVariable Long id) throws IOException {
+        Course course = courseRepository.findById(id).orElse(null);
+        return streamThumbnail(course);
+    }
+
+    // Support for legacy /api/courses/share/{slug}/thumbnail
     @GetMapping("/{slug}/thumbnail")
-    public ResponseEntity<byte[]> getThumbnail(@PathVariable String slug) throws IOException {
-        Course course = courseRepository.findBySlug(slug)
-                .orElse(null);
+    public ResponseEntity<byte[]> getThumbnailBySlug(@PathVariable String slug) throws IOException {
+        if (slug.matches("\\d+")) {
+            return getThumbnailById(Long.parseLong(slug));
+        }
+        Course course = courseRepository.findBySlug(slug).orElse(null);
+        return streamThumbnail(course);
+    }
+
+    private ResponseEntity<byte[]> streamThumbnail(Course course) throws IOException {
 
         if (course == null || course.getThumbnailUrl() == null || course.getThumbnailUrl().isBlank()) {
             return ResponseEntity.notFound().build();
