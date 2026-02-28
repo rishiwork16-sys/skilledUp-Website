@@ -4,10 +4,8 @@ server:
 spring:
   application:
     name: api-gateway
-  servlet:
-    multipart:
-      max-file-size: 500MB
-      max-request-size: 500MB
+  codec:
+    max-in-memory-size: 500MB
   cloud:
     gateway:
       discovery:
