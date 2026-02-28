@@ -4,6 +4,10 @@ server:
 spring:
   application:
     name: api-gateway
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
   cloud:
     gateway:
       discovery:
@@ -16,7 +20,11 @@ spring:
       globalcors:
         cors-configurations:
           '[/**]':
-            allowedOrigins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:5174,https://innovation.skilledup.tech,https://skilledup.tech}
+            allowedOrigins: 
+              - http://localhost:5173
+              - http://localhost:5174
+              - https://innovation.skilledup.tech
+              - https://skilledup.tech
             allowedMethods: ${CORS_ALLOWED_METHODS:GET,POST,PUT,DELETE,OPTIONS}
             allowedHeaders: ${CORS_ALLOWED_HEADERS:*}
             allowCredentials: ${CORS_ALLOW_CREDENTIALS:true}
