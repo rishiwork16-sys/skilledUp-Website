@@ -14,8 +14,8 @@ import java.util.ArrayList;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"modules", "keyHighlights"})
-@EqualsAndHashCode(exclude = {"modules", "keyHighlights"})
+@ToString(exclude = { "modules", "keyHighlights" })
+@EqualsAndHashCode(exclude = { "modules", "keyHighlights" })
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,6 +40,7 @@ public class Course {
     private String certificateUrl;
     private String introVideoUrl;
     private String category;
+    private String brochureUrl;
 
     @JsonManagedReference
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)

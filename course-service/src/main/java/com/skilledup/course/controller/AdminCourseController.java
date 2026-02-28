@@ -87,22 +87,33 @@ public class AdminCourseController {
         return ResponseEntity.ok(courseService.getCourseById(id));
     }
 
+    @PostMapping("/{id}/brochure")
+    public ResponseEntity<Course> uploadBrochure(@PathVariable Long id, @RequestParam("file") MultipartFile file)
+            throws IOException {
+        courseService.uploadBrochure(id, file);
+        return ResponseEntity.ok(courseService.getCourseById(id));
+    }
+
+    @DeleteMapping("/{id}/brochure")
+    public ResponseEntity<Course> deleteBrochure(@PathVariable Long id) {
+        courseService.deleteBrochure(id);
+        return ResponseEntity.ok(courseService.getCourseById(id));
+    }
+
     @PostMapping("/{id}/mentors/image")
     public ResponseEntity<?> uploadMentorImage(@PathVariable Long id, @RequestParam("file") MultipartFile file)
             throws IOException {
         String key = courseService.uploadMentorImage(id, file);
         return ResponseEntity.ok(Map.of(
                 "key", key,
-                "url", courseService.generatePresignedUrl(key)
-        ));
+                "url", courseService.generatePresignedUrl(key)));
     }
 
     @PostMapping("/{id}/tools-covered")
     public ResponseEntity<Course> uploadToolsCovered(
             @PathVariable Long id,
             @RequestParam(value = "files", required = false) List<MultipartFile> files,
-            @RequestParam(value = "append", defaultValue = "false") boolean append
-    ) throws IOException {
+            @RequestParam(value = "append", defaultValue = "false") boolean append) throws IOException {
         courseService.uploadToolsCovered(id, files, append);
         return ResponseEntity.ok(courseService.getCourseById(id));
     }

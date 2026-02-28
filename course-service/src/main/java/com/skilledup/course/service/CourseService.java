@@ -48,7 +48,7 @@ public class CourseService {
         if (course.getKeyHighlights() != null) {
             course.getKeyHighlights().forEach(kh -> kh.setCourse(course));
         }
-        
+
         if (course.getCareerOpportunities() != null) {
             course.getCareerOpportunities().forEach(co -> co.setCourse(course));
         }
@@ -94,11 +94,17 @@ public class CourseService {
             course.setIntroVideoUrl(s3Service.generatePresignedUrl(course.getIntroVideoUrl()));
         }
 
+        if (course.getBrochureUrl() != null && !course.getBrochureUrl().startsWith("http")) {
+            course.setBrochureUrl(s3Service.generatePresignedUrl(course.getBrochureUrl()));
+        }
+
         if (course.getMentors() != null && !course.getMentors().isEmpty()) {
             for (var mentor : course.getMentors()) {
-                if (mentor == null) continue;
+                if (mentor == null)
+                    continue;
                 String key = mentor.getImageKey();
-                if (key == null || key.isBlank()) continue;
+                if (key == null || key.isBlank())
+                    continue;
                 if (key.startsWith("http")) {
                     mentor.setImageUrl(key);
                 } else {
@@ -110,7 +116,8 @@ public class CourseService {
         if (course.getToolsCovered() != null && !course.getToolsCovered().isEmpty()) {
             java.util.List<String> resolved = new java.util.ArrayList<>(course.getToolsCovered().size());
             for (String key : course.getToolsCovered()) {
-                if (key == null || key.isBlank()) continue;
+                if (key == null || key.isBlank())
+                    continue;
                 if (key.startsWith("http")) {
                     resolved.add(key);
                 } else {
@@ -147,6 +154,21 @@ public class CourseService {
     }
 
     @Transactional
+    public Course uploadBrochure(Long courseId, MultipartFile file) throws IOException {
+        Course course = findCourseEntity(courseId);
+        String s3Key = s3Service.uploadFile(file);
+        course.setBrochureUrl(s3Key);
+        return courseRepository.save(course);
+    }
+
+    @Transactional
+    public Course deleteBrochure(Long courseId) {
+        Course course = findCourseEntity(courseId);
+        course.setBrochureUrl(null);
+        return courseRepository.save(course);
+    }
+
+    @Transactional
     public String uploadMentorImage(Long courseId, MultipartFile file) throws IOException {
         findCourseEntity(courseId);
         return s3Service.uploadFile(file);
@@ -157,7 +179,8 @@ public class CourseService {
     }
 
     @Transactional
-    public Course uploadToolsCovered(Long courseId, java.util.List<MultipartFile> files, boolean append) throws IOException {
+    public Course uploadToolsCovered(Long courseId, java.util.List<MultipartFile> files, boolean append)
+            throws IOException {
         Course course = findCourseEntity(courseId);
         if (course.getToolsCovered() == null) {
             course.setToolsCovered(new java.util.ArrayList<>());
@@ -167,7 +190,8 @@ public class CourseService {
         }
         if (files != null) {
             for (MultipartFile file : files) {
-                if (file == null || file.isEmpty()) continue;
+                if (file == null || file.isEmpty())
+                    continue;
                 String s3Key = s3Service.uploadFile(file);
                 course.getToolsCovered().add(s3Key);
             }
@@ -202,7 +226,7 @@ public class CourseService {
             course.setDuration(courseDetails.getDuration());
             course.setMode(courseDetails.getMode());
             course.setCategory(courseDetails.getCategory());
-            
+
             if (courseDetails.getThumbnailUrl() != null
                     && !courseDetails.getThumbnailUrl().isBlank()
                     && !courseDetails.getThumbnailUrl().startsWith("http")) {
@@ -219,6 +243,14 @@ public class CourseService {
                     && !courseDetails.getIntroVideoUrl().isBlank()
                     && !courseDetails.getIntroVideoUrl().startsWith("http")) {
                 course.setIntroVideoUrl(courseDetails.getIntroVideoUrl());
+            }
+
+            if (courseDetails.getBrochureUrl() != null
+                    && !courseDetails.getBrochureUrl().isBlank()
+                    && !courseDetails.getBrochureUrl().startsWith("http")) {
+                course.setBrochureUrl(courseDetails.getBrochureUrl());
+            } else if (courseDetails.getBrochureUrl() == null) {
+                course.setBrochureUrl(null);
             }
 
             if (courseDetails.getMentors() != null) {
@@ -238,7 +270,7 @@ public class CourseService {
                 }
                 // Reset IDs to avoid Hibernate conflict
                 courseDetails.getKeyHighlights().forEach(kh -> kh.setId(null));
-                
+
                 course.getKeyHighlights().addAll(courseDetails.getKeyHighlights());
                 course.getKeyHighlights().forEach(kh -> kh.setCourse(course));
             }
@@ -250,7 +282,7 @@ public class CourseService {
                     course.getCareerOpportunities().clear();
                 }
                 courseDetails.getCareerOpportunities().forEach(co -> co.setId(null));
-                
+
                 course.getCareerOpportunities().addAll(courseDetails.getCareerOpportunities());
                 course.getCareerOpportunities().forEach(co -> co.setCourse(course));
             }
