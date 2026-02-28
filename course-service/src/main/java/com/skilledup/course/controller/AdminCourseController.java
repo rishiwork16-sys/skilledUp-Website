@@ -15,6 +15,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin/courses")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class AdminCourseController {
 
     @Autowired
