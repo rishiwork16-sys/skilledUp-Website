@@ -231,18 +231,24 @@ public class CourseService {
                     && !courseDetails.getThumbnailUrl().isBlank()
                     && !courseDetails.getThumbnailUrl().startsWith("http")) {
                 course.setThumbnailUrl(courseDetails.getThumbnailUrl());
+            } else if (courseDetails.getThumbnailUrl() == null) {
+                course.setThumbnailUrl(null);
             }
 
             if (courseDetails.getCertificateUrl() != null
                     && !courseDetails.getCertificateUrl().isBlank()
                     && !courseDetails.getCertificateUrl().startsWith("http")) {
                 course.setCertificateUrl(courseDetails.getCertificateUrl());
+            } else if (courseDetails.getCertificateUrl() == null) {
+                course.setCertificateUrl(null);
             }
 
             if (courseDetails.getIntroVideoUrl() != null
                     && !courseDetails.getIntroVideoUrl().isBlank()
                     && !courseDetails.getIntroVideoUrl().startsWith("http")) {
                 course.setIntroVideoUrl(courseDetails.getIntroVideoUrl());
+            } else if (courseDetails.getIntroVideoUrl() == null) {
+                course.setIntroVideoUrl(null);
             }
 
             if (courseDetails.getBrochureUrl() != null
