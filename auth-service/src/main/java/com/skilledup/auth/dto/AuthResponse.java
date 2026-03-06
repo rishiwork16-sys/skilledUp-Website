@@ -15,4 +15,6 @@ public class AuthResponse {
     private String mobile;
     private String name;
     private Role role;
+    private boolean emailVerified;
+    private boolean mobileVerified;
 }

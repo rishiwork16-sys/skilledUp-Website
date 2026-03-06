@@ -82,7 +82,8 @@ public class AuthServiceImpl implements AuthService {
         String token = jwtTokenProvider.generateToken(user.getEmail(), user.getRole().name(), user.getId(),
                 user.getName());
 
-        return new AuthResponse(token, user.getId(), user.getEmail(), user.getMobile(), user.getName(), user.getRole());
+        return new AuthResponse(token, user.getId(), user.getEmail(), user.getMobile(), user.getName(), user.getRole(),
+                user.isEmailVerified(), user.isMobileVerified());
     }
 
     @Override
@@ -112,7 +113,8 @@ public class AuthServiceImpl implements AuthService {
         String token = jwtTokenProvider.generateToken(user.getEmail(), user.getRole().name(), user.getId(),
                 user.getName());
 
-        return new AuthResponse(token, user.getId(), user.getEmail(), user.getMobile(), user.getName(), user.getRole());
+        return new AuthResponse(token, user.getId(), user.getEmail(), user.getMobile(), user.getName(), user.getRole(),
+                user.isEmailVerified(), user.isMobileVerified());
     }
 
     @Override
@@ -133,7 +135,8 @@ public class AuthServiceImpl implements AuthService {
         String token = jwtTokenProvider.generateToken(user.getEmail(), user.getRole().name(), user.getId(),
                 user.getName());
 
-        return new AuthResponse(token, user.getId(), user.getEmail(), user.getMobile(), user.getName(), user.getRole());
+        return new AuthResponse(token, user.getId(), user.getEmail(), user.getMobile(), user.getName(), user.getRole(),
+                user.isEmailVerified(), user.isMobileVerified());
     }
 
     @Override
@@ -156,7 +159,8 @@ public class AuthServiceImpl implements AuthService {
 
         String token = jwtTokenProvider.generateToken(user.getEmail(), user.getRole().name(), user.getId(),
                 user.getName());
-        return new AuthResponse(token, user.getId(), user.getEmail(), user.getMobile(), user.getName(), user.getRole());
+        return new AuthResponse(token, user.getId(), user.getEmail(), user.getMobile(), user.getName(), user.getRole(),
+                user.isEmailVerified(), user.isMobileVerified());
     }
 
     @Override
@@ -297,7 +301,8 @@ public class AuthServiceImpl implements AuthService {
                     log.error("User NOT FOUND in database for email: '{}'", email);
                     return new RuntimeException("User not found");
                 });
-        return new AuthResponse(null, user.getId(), user.getEmail(), user.getMobile(), user.getName(), user.getRole());
+        return new AuthResponse(null, user.getId(), user.getEmail(), user.getMobile(), user.getName(), user.getRole(),
+                user.isEmailVerified(), user.isMobileVerified());
     }
 
     @Override
@@ -321,7 +326,8 @@ public class AuthServiceImpl implements AuthService {
         }
 
         user = userRepository.save(user);
-        return new AuthResponse(null, user.getId(), user.getEmail(), user.getMobile(), user.getName(), user.getRole());
+        return new AuthResponse(null, user.getId(), user.getEmail(), user.getMobile(), user.getName(), user.getRole(),
+                user.isEmailVerified(), user.isMobileVerified());
     }
 
     @Override
