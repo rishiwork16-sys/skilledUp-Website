@@ -33,7 +33,7 @@ public class CareerService {
     public Job updateJob(Long id, Job jobDetails) {
         Job job = jobRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Job not found"));
-        
+
         job.setTitle(jobDetails.getTitle());
         job.setLocation(jobDetails.getLocation());
         job.setType(jobDetails.getType());
@@ -42,6 +42,9 @@ public class CareerService {
         job.setDescription(jobDetails.getDescription());
         job.setRequirements(jobDetails.getRequirements());
         job.setActive(jobDetails.isActive());
+        if (jobDetails.getDescriptionFileKey() != null && !jobDetails.getDescriptionFileKey().isBlank()) {
+            job.setDescriptionFileKey(jobDetails.getDescriptionFileKey());
+        }
 
         return jobRepository.save(job);
     }
@@ -51,8 +54,17 @@ public class CareerService {
     }
 
     public Job getJob(Long id) {
-        return jobRepository.findById(id)
+        Job job = jobRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Job not found"));
+        // Resolve presigned URL for JD file if exists
+        if (job.getDescriptionFileKey() != null && !job.getDescriptionFileKey().isBlank()) {
+            job.setDescriptionFileKey(s3Service.generatePresignedUrl(job.getDescriptionFileKey()));
+        }
+        return job;
+    }
+
+    public String uploadJdFile(MultipartFile file) {
+        return s3Service.uploadFile(file, "careers/jd");
     }
 
     public List<Job> getAllJobs(boolean activeOnly) {
@@ -67,7 +79,7 @@ public class CareerService {
     public JobApplication applyForJob(String applicationDataJson, MultipartFile resume) {
         try {
             JobApplicationRequest request = objectMapper.readValue(applicationDataJson, JobApplicationRequest.class);
-            
+
             // Validate Job
             Job job = jobRepository.findById(request.getJobId())
                     .orElseThrow(() -> new RuntimeException("Job not found"));

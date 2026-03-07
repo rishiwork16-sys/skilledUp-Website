@@ -67,6 +67,13 @@ public class CareerController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/admin/upload-jd")
+    public ResponseEntity<Map<String, String>> uploadJdFile(
+            @RequestParam("file") MultipartFile file) {
+        String key = careerService.uploadJdFile(file);
+        return ResponseEntity.ok(Map.of("key", key));
+    }
+
     @GetMapping("/admin/applications")
     public ResponseEntity<List<JobApplicationAdminResponse>> getAllApplications() {
         return ResponseEntity.ok(careerService.getAllApplicationsAdmin());

@@ -48,6 +48,9 @@ public class Job {
 
     private boolean active;
 
+    @Column(length = 512)
+    private String descriptionFileKey;
+
     @CreationTimestamp
     private LocalDateTime postedDate;
 
