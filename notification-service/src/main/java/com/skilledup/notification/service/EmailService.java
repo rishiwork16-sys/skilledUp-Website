@@ -59,7 +59,8 @@ public class EmailService {
 
         } catch (Exception e) {
             log.error("Failed to send email: {}", e.getMessage());
-            saveLog(request.getRecipient(), request.getSubject(), "Error", request.getType(),
+            String fallbackSubject = request.getSubject() != null ? request.getSubject() : "Notification";
+            saveLog(request.getRecipient(), fallbackSubject, "Error: " + e.getMessage(), request.getType(),
                     NotificationLog.NotificationStatus.FAILED, e.getMessage());
         }
     }
