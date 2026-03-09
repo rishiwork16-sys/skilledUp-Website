@@ -227,6 +227,12 @@ public class CourseService {
             course.setMode(courseDetails.getMode());
             course.setCategory(courseDetails.getCategory());
 
+            // Dynamic schedule mapping
+            course.setBatch1Date(courseDetails.getBatch1Date());
+            course.setBatch1Time(courseDetails.getBatch1Time());
+            course.setBatch2Date(courseDetails.getBatch2Date());
+            course.setBatch2Time(courseDetails.getBatch2Time());
+
             if (courseDetails.getThumbnailUrl() != null
                     && !courseDetails.getThumbnailUrl().isBlank()
                     && !courseDetails.getThumbnailUrl().startsWith("http")) {

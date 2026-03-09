@@ -42,6 +42,12 @@ public class Course {
     private String category;
     private String brochureUrl;
 
+    // Dynamic Course Schedule Config
+    private String batch1Date;
+    private String batch1Time;
+    private String batch2Date;
+    private String batch2Time;
+
     @JsonManagedReference
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Module> modules = new ArrayList<>();
