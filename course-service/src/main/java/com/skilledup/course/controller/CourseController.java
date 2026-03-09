@@ -23,6 +23,9 @@ public class CourseController {
     @Autowired
     private CourseService courseService;
 
+    @Value("${application.frontend.base-url:https://skilledup.tech}")
+    private String frontendBaseUrl;
+
     @GetMapping("/health")
     public ResponseEntity<ApiMessage> health() {
         return ResponseEntity.ok(new ApiMessage("Course Service is running"));
@@ -44,9 +47,7 @@ public class CourseController {
     }
 
     @GetMapping("/share/{slug}")
-    public ResponseEntity<String> getSharePage(
-            @PathVariable String slug,
-            @Value("${application.frontend.base-url:https://skilledup.tech}") String frontendBaseUrl) {
+    public ResponseEntity<String> getSharePage(@PathVariable String slug) {
         try {
             com.skilledup.course.entity.Course course = courseService.getCourseBySlug(slug);
 
