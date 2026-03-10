@@ -43,7 +43,7 @@ spring:
         - id: student-service
           uri: ${STUDENT_SERVICE_URI:http://localhost:8082}
           predicates:
-            - Path=/api/students/**, /api/internship-types/**, /api/categories/**, /api/requests/**, /api/admin/students/**, /api/student/config/**, /api/student/enrollments/**, /api/lor/**, /api/enquiries/**, /api/student-inquiries/**, /api/admin/enquiries/**, /api/admin/backgrounds/**, /api/admin/states/**
+            - Path=/api/students/**, /api/internship-types/**, /api/categories/**, /api/requests/**, /api/admin/students/**, /api/student/config/**, /api/student/enrollments/**, /api/lor/**, /api/enquiries/**, /api/student-inquiries/**, /api/admin/enquiries/**, /api/admin/backgrounds/**, /api/admin/states/**, /api/feedbacks/**, /api/admin/feedbacks/**
         
         # Task Service Routes
         - id: task-service
